@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>24-uurs Klok</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+    <script type="module" src="/src/main.ts" defer></script>
+  </head>
+  <body>
+    <div data-tauri-drag-region class="drag-bar">
+      <span data-i18n="dragBar">Sleep hier</span>
+      <div class="header-buttons">
+        <button id="settings-btn" class="icon-btn">⚙</button>
+        <button id="close-btn" class="icon-btn close-btn">✕</button>
+      </div>
+    </div>
+
+    <!-- Instellingen menu (verborgen) -->
+    <div id="settings-panel" class="settings-panel hidden">
+      <label data-i18n="languageLabel">Taal / Language:</label>
+      <select id="language-select">
+        <option value="nl">Nederlands</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+
+    <div class="controls">
+      <button id="toggle-view" data-i18n="toggleView">Wissel weergave</button>
+    </div>
+
+    <div class="moment-form">
+      <input type="time" id="moment-time" required />
+      <input type="text" id="moment-label" data-i18n-placeholder="momentPlaceholder" placeholder="Naam (bijv. Eten)" maxlength="20" />
+      <button id="add-moment-btn">+</button>
+    </div>
+
+    <!-- Ronde 24-uurs klok -->
+    <div id="round-view" class="view active">
+      <svg width="200" height="200" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="90" fill="none" stroke="#444" stroke-width="6" />
+        <g id="round-markers"></g>
+        <text x="100" y="24" text-anchor="middle" fill="#aaa" font-size="12">00</text>
+        <text x="178" y="104" text-anchor="middle" fill="#aaa" font-size="12">06</text>
+        <text x="100" y="184" text-anchor="middle" fill="#aaa" font-size="12">12</text>
+        <text x="22" y="104" text-anchor="middle" fill="#aaa" font-size="12">18</text>
+        <line id="round-hand" x1="100" y1="100" x2="100" y2="34" stroke="#ff4757" stroke-width="4" stroke-linecap="round" />
+        <circle cx="100" cy="100" r="5" fill="#ff4757" />
+      </svg>
+      <div class="time-display" id="digital-time-round">00:00</div>
+    </div>
+
+    <!-- Horizontale 24-uurs tijdbalk -->
+    <div id="bar-view" class="view">
+      <div class="bar-container">
+        <div id="bar-markers"></div>
+        <div id="bar-indicator" class="bar-indicator"></div>
+      </div>
+      <div class="bar-labels">
+        <span>00:00</span>
+        <span>06:00</span>
+        <span>12:00</span>
+        <span>18:00</span>
+        <span>24:00</span>
+      </div>
+      <div class="time-display" id="digital-time-bar">00:00</div>
+    </div>
+
+    <!-- NIEUW: Aftel tekst onder de klok/balk -->
+    <div id="countdown-display" class="countdown-text"></div>
+
+    <div id="marker-tooltip" class="marker-tooltip hidden"></div>
+
+    <div id="confirm-modal" class="confirm-modal hidden">
+      <div class="confirm-box">
+        <p id="confirm-text"></p>
+        <div class="confirm-actions">
+          <button id="confirm-yes" class="btn-danger" data-i18n="delete">Verwijderen</button>
+          <button id="confirm-no" class="btn-secondary" data-i18n="cancel">Annuleren</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
