@@ -8,10 +8,15 @@
 
 Een lichte, overzichtelijke 24-uurs bureaubladwidget die altijd bovenop andere vensters blijft zweven (*always-on-top*). Ontworpen om in één oogopslag grip te houden op het verloop van de dag en geplande momenten.
 
+### Nieuw in versie 1.1
+* **Automatisch opstarten:** Optie toegevoegd om de app direct met Windows mee te laten starten.
+* **Instelbare waarschuwingstijd:** Kies zelf hoeveel minuten van tevoren de afteller verschijnt (1 tot 120 minuten).
+* **Minimaliseren & Flexibel venster:** Nieuwe knop om de app naar de taakbalk te minimaliseren. Het venster schaalt nu ook automatisch soepel mee met de inhoud.
+
 ### Functies
 * **Twee weergaven:** Wissel direct tussen een ronde 24-uurs klok en een horizontale 24-uurs tijdbalk.
 * **Eigen momenten:** Voeg vaste momenten toe (zoals etenstijd, medicijnen of bedtijd) die lokaal bewaard blijven en ook na middernacht doorlopen.
-* **Afteller & meldingen:** Telt vanaf 15 minuten van tevoren af in minuten en geeft op het ingestelde tijdstip een rustig geluidssignaal en bureaubladmelding.
+* **Afteller & meldingen:** Telt af in minuten en geeft op het ingestelde tijdstip een rustig geluidssignaal en bureaubladmelding.
 * **Compact & randloos:** Vrij versleepbaar over het scherm, voorzien van hover-labels op de markeringen.
 * **Tweetalig:** Kies via het tandwiel-icoon rechtsboven tussen Nederlands en Engels.
 
@@ -39,6 +44,11 @@ npm run tauri build
 ## English
 
 A lightweight, clean 24-hour desktop widget that stays on top of other windows (*always-on-top*). Designed to provide an intuitive visual overview of the entire day and upcoming daily events.
+
+### New in version 1.1
+* **Autostart:** Added an option to automatically launch the app when Windows starts.
+* **Adjustable warning time:** Customize how many minutes in advance the countdown appears (1 to 120 minutes).
+* **Minimize & Flexible window:** Added a minimize-to-taskbar button. The window height now automatically adjusts to fit the content.
 
 ### Features
 * **Dual views:** Switch seamlessly between a circular 24-hour clock and a horizontal 24-hour timeline bar.
