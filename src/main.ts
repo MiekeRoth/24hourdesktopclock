@@ -1,6 +1,8 @@
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/plugin-notification';
 import { translations } from './translations';
+import { LogicalSize } from '@tauri-apps/api/dpi';
+import { enable, isEnabled, disable } from '@tauri-apps/plugin-autostart';
 
 // --- TAAL EN VERTALINGEN ---
 type Language = 'nl' | 'en';
@@ -43,11 +45,57 @@ langSelect.addEventListener('change', (e) => {
   renderMoments(); // Her-render tooltips indien nodig
 });
 
+// --- WAARSCHUWINGSTIJD ---
+let warningMinutes = parseInt(localStorage.getItem('klok24_warning_time') || '15', 10);
+const warningInput = document.getElementById('warning-time-input') as HTMLInputElement;
+warningInput.value = warningMinutes.toString();
+
+warningInput.addEventListener('change', (e) => {
+  let val = parseInt((e.target as HTMLInputElement).value, 10);
+  if (isNaN(val) || val < 1) val = 1;
+  if (val > 120) val = 120;
+  warningMinutes = val;
+  warningInput.value = val.toString();
+  localStorage.setItem('klok24_warning_time', val.toString());
+  updateClock(); // Forceer een update om de afteller direct aan te passen
+});
+
+// --- AUTOMATISCH OPSTARTEN ---
+const autostartCheckbox = document.getElementById('autostart-checkbox') as HTMLInputElement;
+
+async function initAutostart() {
+  try {
+    autostartCheckbox.checked = await isEnabled();
+  } catch (err) {
+    console.error('Autostart status ophalen mislukt:', err);
+  }
+}
+
+autostartCheckbox?.addEventListener('change', async () => {
+  try {
+    if (autostartCheckbox.checked) {
+      await enable();
+    } else {
+      await disable();
+    }
+  } catch (err) {
+    console.error('Autostart aanpassen mislukt:', err);
+    autostartCheckbox.checked = !autostartCheckbox.checked;
+  }
+});
+
+initAutostart();
+
+
 applyTranslations();
 
 // --- UI ACTIES (SLEPEN, SLUITEN, INSTELLINGEN) ---
 const closeBtn = document.getElementById('close-btn');
 closeBtn?.addEventListener('click', () => getCurrentWindow().close());
+
+// --- Minimaliseer knop ---
+const minimizeBtn = document.getElementById('minimize-btn');
+minimizeBtn?.addEventListener('click', () => getCurrentWindow().minimize());
 
 const dragBar = document.querySelector('.drag-bar');
 dragBar?.addEventListener('mousedown', (e) => {
@@ -242,26 +290,26 @@ async function checkAlarmsAndCountdown(hours: number, minutes: number) {
     }
   }
 
-  // 2. Aftellen voor komende momenten (binnen 15 minuten)
-  let upcomingMoment: Moment | null = null;
-  let minDiff = 16; // We kijken maximaal 15 minuten vooruit
+ // 2. Aftellen voor komende momenten
+      let upcomingMoment: Moment | null = null;
+      let minDiff = warningMinutes + 1; // dynamische grenswaarde
 
-  moments.forEach(m => {
-    const [mHours, mMinutes] = m.time.split(':').map(Number);
-    const momentTotal = mHours * 60 + mMinutes;
-    
-    let diff = momentTotal - currentMinuteTotal;
-    // Als het moment na middernacht is en we zitten voor middernacht
-    if (diff < 0) diff += 24 * 60;
+      moments.forEach(m => {
+        const [mHours, mMinutes] = m.time.split(':').map(Number);
+        const momentTotal = mHours * 60 + mMinutes;
+        
+        let diff = momentTotal - currentMinuteTotal;
+        // Als het moment na middernacht is en we zitten voor middernacht
+        if (diff < 0) diff += 24 * 60;
 
-    if (diff >= 0 && diff <= 15) {
-      // Vind het moment dat het snelst aankomt
-      if (diff < minDiff) {
-        minDiff = diff;
-        upcomingMoment = m;
-      }
-    }
-  });
+        if (diff >= 0 && diff <= warningMinutes) {
+          // Vind het moment dat het snelst aankomt
+          if (diff < minDiff) {
+            minDiff = diff;
+            upcomingMoment = m;
+          }
+        }
+      });
 
   const countdownDisplay = document.getElementById('countdown-display');
   if (countdownDisplay) {
@@ -301,3 +349,20 @@ function updateClock() {
 renderMoments();
 updateClock();
 setInterval(updateClock, 1000);
+
+// --- DYNAMISCHE VENSTERHOOGTE ---
+const windowWidth = window.innerWidth;
+let lastHeight = 0;
+
+async function syncWindowHeight() {
+  const newHeight = Math.ceil(document.body.getBoundingClientRect().height);
+  if (newHeight > 0 && newHeight !== lastHeight) {
+    lastHeight = newHeight;
+    await getCurrentWindow().setSize(new LogicalSize(windowWidth, newHeight));
+  }
+}
+
+const resizeObserver = new ResizeObserver(() => {
+  syncWindowHeight();
+});
+resizeObserver.observe(document.body);

@@ -10,7 +10,9 @@ export const translations = {
     timeFor: 'Tijd voor:',
     defaultMoment: 'Moment',
     countdown: 'Nog {minutes} min tot {label}',
-    countdownNow: '{label} nu!'
+    countdownNow: '{label} nu!',
+    warningTimeLabel: "Waarschuwingstijd (min):",
+    autostartLabel: "Automatisch opstarten:",
   },
   en: {
     dragBar: "Drag here",
@@ -23,6 +25,8 @@ export const translations = {
     timeFor: 'Time for:',
     defaultMoment: 'Moment',
     countdown: '{minutes} min until {label}',
-    countdownNow: '{label} now!'
+    countdownNow: '{label} now!',
+    warningTimeLabel: "Warning time (min):",
+    autostartLabel: "Start automatically:",
   }
 };
